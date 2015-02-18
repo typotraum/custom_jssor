@@ -1,0 +1,210 @@
+<?php
+
+/**
+ * @file custom_jssor.module
+ * TODO: Enter file description here.
+ */
+
+/**
+ * Implements hook_block_info().
+ */
+function custom_jssor_block_info() {
+    $blocks = array();
+    $blocks['jssor_slider'] = array('info' => t('Jssor Slider'), 'cache' => DRUPAL_CACHE_PER_ROLE, );
+	
+    return $blocks;
+}
+
+/**
+ * Implements hook_block_view().
+ */
+function custom_jssor_block_view($delta = '') {
+
+    $block = array();
+$test = variable_get("custom_jssor_maxdisp", 3);
+
+$test2 = variable_get("image1");
+// var_dump($test);
+// var_dump($test2);
+
+
+    switch ($delta) {
+        case 'jssor_slider' :
+            $block['subject'] = '';
+            $block['content'] = _custom_jssor_content();
+            break;
+    }
+
+    return $block;
+}
+
+
+function _custom_jssor_content() {
+    custom_jssor_add_header_files();
+    $output = "";
+    $filename = dirname(__FILE__) . '/' . "custom_jssor.tpl.php";
+    include($filename);
+    
+/*     $handle = fopen($filename, "r");
+    $file = fread($handle, filesize($filename));
+    fclose($handle);
+    global $base_url;
+    global $term;
+
+    $output .= $file;
+    return $output; */
+}
+
+function custom_jssor_add_header_files() {
+
+    drupal_add_css(drupal_get_path('module', 'custom_jssor') . '/css/custom_jssor.css', array('group' => CSS_DEFAULT, 'every_page' => TRUE));
+
+    drupal_add_js(drupal_get_path('module', 'custom_jssor') . '/js/jssor.slider.mini.js', 'file');
+    drupal_add_js(drupal_get_path('module', 'custom_jssor') . '/js/script.js', 'file');
+
+
+}
+
+
+
+/**
+ * Form validate handler.
+ */
+function custom_jssor_settings_form_validate($form, &$form_state) {
+    if ($form_state['values']['element'] != 'hello') {
+        form_set_error('element', t('Please say hello?'));
+    }
+}
+
+/**
+ * Form submit handler.
+ */
+function custom_jssor_settings_form_submit($form, &$form_state) {
+
+}
+
+/**
+ * Implements hook_help().
+ */
+function custom_jssor_help($path, $arg) {
+
+  if ($path == 'admin/help#custom-jssor') {
+    $output = '<h3>' . t('About') . '</h3>';
+    $output .= '<p>' . t('Jssor Slider for Drupal7') . '</p>';
+    return $output;
+  }
+}
+
+
+function custom_jssor_settings($form, $form_state) {
+   echo 'custom_jssor_settings';
+    
+}
+
+
+function custom_jssor_admin($form, &$form_state) {
+   
+      	  
+ $form = array();
+
+  // Because we have many fields with the same values, we have to set
+  // #tree to be able to access them.
+ //  $form['#tree'] = TRUE;
+
+ 
+  $form['custom_jssor_image']['custom_jssor_image1'] = array(
+        '#type' => 'managed_file',
+        '#name' => 'custom_jssor_image1_image',
+        '#title' => t('Slider Bild1'),
+        '#default_value' => variable_get('custom_jssor_image1', ''),
+        '#description' => t("Slider Image"),
+        '#required' => FALSE,
+        '#upload_location' => 'public://media/img/'
+    ); 
+ 
+  $form['custom_jssor_image']['custom_jssor_image2'] = array(
+        '#type' => 'managed_file',
+        '#name' => 'custom_jssor_image2_image',
+        '#title' => t('Slider Bild2'),
+        '#default_value' => variable_get('custom_jssor_image2', ''),
+        '#description' => t("Slider Image"),
+        '#required' => FALSE,
+        '#upload_location' => 'public://media/img/'
+    ); 
+
+  $form['custom_jssor_image']['custom_jssor_image3'] = array(
+        '#type' => 'managed_file',
+        '#name' => 'custom_jssor_image3_image',
+        '#title' => t('Slider Bild3'),
+        '#default_value' => variable_get('custom_jssor_image3', ''),
+        '#description' => t("Slider Image"),
+        '#required' => FALSE,
+        '#upload_location' => 'public://media/img/'
+    ); 
+  $form['custom_jssor_image']['custom_jssor_image4'] = array(
+        '#type' => 'managed_file',
+        '#name' => 'custom_jssor_image4_image',
+        '#title' => t('Slider Bild4'),
+        '#default_value' => variable_get('custom_jssor_image4', ''),
+        '#description' => t("Slider Image"),
+        '#required' => FALSE,
+        '#upload_location' => 'public://media/img/'
+    ); 
+	
+  $form['custom_jssor_image']['custom_jssor_image5'] = array(
+        '#type' => 'managed_file',
+        '#name' => 'custom_jssor_image5_image',
+        '#title' => t('Slider Bild5'),
+        '#default_value' => variable_get('custom_jssor_image5', ''),
+        '#description' => t("Slider Image"),
+        '#required' => FALSE,
+        '#upload_location' => 'public://media/img/'
+    ); 
+
+
+/* TODO $form['custom_jssor_public_path'] = array(
+    '#type' => 'textfield',
+    '#name' => 'custom_jssor_upload_path',
+    '#title' => t('Upload Path'),
+    '#description' => t("eg. public://media/img/"),
+   // '#default_value' => variable_get('custom_jssor_upload_path', ''),
+);
+ */
+
+  return system_settings_form($form);
+
+  }
+
+
+
+function custom_jssor_menu() {
+
+echo "function";
+  $items = array();
+
+ // $items['admin/config/user-interface/custom-jssor'] = array(
+   $items['admin/structure/custom-jssor'] = array(
+    'title' => 'Jssor Slider',
+    'description' => 'Preferences of the custom_jssor Module',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('custom_jssor_admin'),
+    'access arguments' => array('administer custom_jssor settings'),
+    'type' => MENU_NORMAL_ITEM,
+   );
+
+  return $items;
+}
+
+
+
+
+function custom_jssor_permission() {
+  return array(
+    'administer custom_jssor' => array(
+      'title' => t('Administer custom_jssor'),
+      'description' => t('Perform administration tasks for Jssor Slider.'),
+    ),
+  );
+}
+
+

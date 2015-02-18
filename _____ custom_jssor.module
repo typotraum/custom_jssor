@@ -1,0 +1,181 @@
+<?php
+
+/**
+ * @file custom_jssor.module
+ * TODO: Enter file description here.
+ */
+
+/**
+ * Implements hook_block_info().
+ */
+function custom_jssor_block_info() {
+    $blocks = array();
+    $blocks['jssor_slider'] = array('info' => t('Jssor Slider'), 'cache' => DRUPAL_CACHE_PER_ROLE, );
+
+    return $blocks;
+}
+
+/**
+ * Implements hook_block_view().
+ */
+function custom_jssor_block_view($delta = '') {
+
+    $block = array();
+$test = variable_get("custom_jssor_maxdisp", 3);
+
+$test2 = variable_get("image1");
+// var_dump($test);
+// var_dump($test2);
+
+
+    switch ($delta) {
+        case 'jssor_slider' :
+            $block['subject'] = '';
+            $block['content'] = _custom_jssor_content();
+            break;
+    }
+
+    return $block;
+}
+
+
+
+
+
+
+function _custom_jssor_content() {
+    custom_jssor_add_header_files();
+    $output = "";
+    $filename = dirname(__FILE__) . '/' . "custom_jssor.tpl.php";
+    include($filename);
+    
+/*     $handle = fopen($filename, "r");
+    $file = fread($handle, filesize($filename));
+    fclose($handle);
+    global $base_url;
+    global $term;
+
+    $output .= $file;
+    return $output; */
+}
+
+function custom_jssor_add_header_files() {
+
+    drupal_add_css(drupal_get_path('module', 'custom_jssor') . '/css/custom_jssor.css', array('group' => CSS_DEFAULT, 'every_page' => TRUE));
+
+    drupal_add_js(drupal_get_path('module', 'custom_jssor') . '/js/jssor.slider.mini.js', 'file');
+    drupal_add_js(drupal_get_path('module', 'custom_jssor') . '/js/script.js', 'file');
+
+    //drupal_add_js(array("custom_jssor" => $js_variables), "setting");
+
+    // drupal_add_js("http://d3js.org/d3.v3.min.js");
+
+    // drupal_add_js( array ("custom_jssor" => $settings), 'setting');
+
+}
+
+/**
+ * Form builder.
+ */
+function custom_jssor_settings_form($form, &$form_state) {
+    $form['custom_jssor_variable_foo'] = array('#type' => 'textfield', '#title' => t('Foo'), '#default_value' => variable_get('custom_jssor_variable_foo', 42), '#required' => TRUE, );
+
+    // TODO! You probably don't need validation or submit handlers if using system_settings_form().
+    
+    
+    /*
+   $form['custom_settings'] = array(
+  '#title' => t('My settings'),
+  '#type' => 'fieldset',
+  '#tree' => TRUE,
+);
+$form['custom_settings']['first_setting'] = array(
+  '#type' => 'textfield',
+  // etcetera
+);
+$form['custom_settings']['second_setting'] = array(
+  '#type' => 'textfield',
+  // etcetera
+); 
+    */
+    
+    
+    
+    return system_settings_form($form);
+}
+
+/**
+ * Form validate handler.
+ */
+function custom_jssor_settings_form_validate($form, &$form_state) {
+    if ($form_state['values']['element'] != 'hello') {
+        form_set_error('element', t('Please say hello?'));
+    }
+}
+
+/**
+ * Form submit handler.
+ */
+function custom_jssor_settings_form_submit($form, &$form_state) {
+
+}
+
+/**
+ * Implements hook_help().
+ */
+function custom_jssor_help($path, $arg) {
+
+  if ($path == 'admin/help#custom-jssor') {
+    $output = '<h3>' . t('About') . '</h3>';
+    $output .= '<p>' . t('Jssor Slider for Drupal7') . '</p>';
+    return $output;
+  }
+}
+
+
+function custom_jssor_admin() {
+  $form = array();
+
+  $form['custom_jssor_maxdisp'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Maximum number of links'),
+    '#default_value' => variable_get('custom_jssor_maxdisp', 3),
+    '#size' => 2,
+    '#maxlength' => 2,
+    '#description' => t("The maximum number of links to display in the block."),
+    '#required' => TRUE,
+  );
+  
+     $form['image1'] = array(
+        '#type' => 'managed_file',
+        '#name' => 'image1_image',
+        '#title' => t('upload image, huh!'),
+        '#default_value' => variable_get('image1', ''),
+        '#description' => t("Das erste Bild für den Slider"),
+        '#required' => TRUE,
+        '#upload_location' => 'public://media/img/'
+    );
+//    $form['#submit'][] = 'image1_form_submit';
+
+  return system_settings_form($form);
+}
+
+
+function custom_jssor_menu() {
+
+  $items = array();
+
+ // $items['admin/config/user-interface/custom-jssor'] = array(
+   $items['admin/structure/custom-jssor'] = array(
+    'title' => 'Jssor Slider',
+    'description' => 'Preferences of the custom_jssor Module',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('custom_jssor_admin'),
+    'access arguments' => array('administer onthisdate settings'),
+    'type' => MENU_NORMAL_ITEM,
+   );
+
+  return $items;
+}
+
+
