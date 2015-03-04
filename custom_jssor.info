@@ -1,4 +1,4 @@
 name = Jssor Slider Custom Modul
 description = Bindet den Jssor Slider ein
 core = 7.x
-# scripts[] = js/script.js
+; scripts[] = js/script.js
